@@ -1,0 +1,86 @@
+HEADER    SCOPe/ASTRAL domain d1e8sa_  [38777]    28-FEB-18   0000
+REMARK  99
+REMARK  99 ASTRAL ASTRAL-version: 2.07
+REMARK  99 ASTRAL SCOPe-sid: d1e8sa_
+REMARK  99 ASTRAL SCOPe-sun: 38777
+REMARK  99 ASTRAL SCOPe-sccs: d.49.1.1
+REMARK  99 ASTRAL Source-PDB: 1e8s
+REMARK  99 ASTRAL Source-PDB-REVDAT: 24-FEB-09
+REMARK  99 ASTRAL Region: A:
+REMARK  99 ASTRAL ASTRAL-SPACI: -0.09 (not valid)
+REMARK  99 ASTRAL ASTRAL-AEROSPACI: -0.09
+REMARK  99 ASTRAL Data-updated-release: 1.55
+ATOM      1  CA  GLN A   5     -13.362 121.902  26.661  1.00 50.00           C  
+ATOM      2  CA  THR A   6     -10.822 119.126  26.001  1.00 50.00           C  
+ATOM      3  CA  TRP A   7     -11.434 118.935  22.241  1.00 50.00           C  
+ATOM      4  CA  GLU A   8     -12.494 122.550  21.732  1.00 50.00           C  
+ATOM      5  CA  GLU A   9      -9.480 123.619  23.794  1.00 50.00           C  
+ATOM      6  CA  PHE A  10      -7.100 121.111  22.227  1.00 50.00           C  
+ATOM      7  CA  SER A  11      -7.759 122.382  18.706  1.00 50.00           C  
+ATOM      8  CA  ARG A  12      -6.957 125.927  19.848  1.00 50.00           C  
+ATOM      9  CA  ALA A  13      -3.532 124.899  21.161  1.00 50.00           C  
+ATOM     10  CA  ALA A  14      -2.883 122.979  17.955  1.00 50.00           C  
+ATOM     11  CA  GLU A  15      -3.920 125.844  15.681  1.00 50.00           C  
+ATOM     12  CA  LYS A  16      -1.652 127.916  17.908  1.00 50.00           C  
+ATOM     13  CA  LEU A  17       1.345 125.773  16.995  1.00 50.00           C  
+ATOM     14  CA  TYR A  18       0.480 125.703  13.306  1.00 50.00           C  
+ATOM     15  CA  LEU A  19       0.475 129.508  13.261  1.00 50.00           C  
+ATOM     16  CA  ALA A  20       3.528 129.965  15.499  1.00 50.00           C  
+ATOM     17  CA  ASP A  21       5.572 128.323  12.737  1.00 50.00           C  
+ATOM     18  CA  PRO A  22       3.616 126.410  10.032  1.00 50.00           C  
+ATOM     19  CA  MET A  23       6.916 125.149   8.638  1.00 50.00           C  
+ATOM     20  CA  LYS A  24       8.325 123.255  11.629  1.00 50.00           C  
+ATOM     21  CA  ALA A  25       5.176 121.530  12.882  1.00 50.00           C  
+ATOM     22  CA  ARG A  26       3.267 118.517  11.552  1.00 50.00           C  
+ATOM     23  CA  VAL A  27       0.109 116.554  12.384  1.00 50.00           C  
+ATOM     24  CA  VAL A  28      -0.162 112.777  12.751  1.00 50.00           C  
+ATOM     25  CA  LEU A  29      -3.390 110.754  12.760  1.00 50.00           C  
+ATOM     26  CA  LYS A  30      -3.324 107.161  14.018  1.00 50.00           C  
+ATOM     27  CA  TYR A  31      -6.346 104.950  13.279  1.00 50.00           C  
+ATOM     28  CA  ARG A  32      -6.362 101.568  15.024  1.00 50.00           C  
+ATOM     29  CA  HIS A  33      -9.521  99.762  13.850  1.00 50.00           C  
+ATOM     30  CA  SER A  34      -8.966  96.590  15.900  1.00 50.00           C  
+ATOM     31  CA  ASP A  35      -8.604  97.990  19.422  1.00 50.00           C  
+ATOM     32  CA  GLY A  36     -11.018 100.552  18.016  1.00 50.00           C  
+ATOM     33  CA  ASN A  37      -9.665 104.039  18.666  1.00 50.00           C  
+ATOM     34  CA  LEU A  38      -8.563 107.219  16.898  1.00 50.00           C  
+ATOM     35  CA  CYS A  39      -5.646 109.506  17.775  1.00 50.00           C  
+ATOM     36  CA  VAL A  40      -4.720 112.978  16.544  1.00 50.00           C  
+ATOM     37  CA  LYS A  41      -1.403 114.636  17.327  1.00 50.00           C  
+ATOM     38  CA  VAL A  42       0.161 117.945  16.350  1.00 50.00           C  
+ATOM     39  CA  THR A  43       3.804 118.341  17.302  1.00 50.00           C  
+ATOM     40  CA  ASP A  44       6.771 120.608  16.666  1.00 50.00           C  
+ATOM     41  CA  ASP A  45       9.230 118.185  18.249  1.00 50.00           C  
+ATOM     42  CA  LEU A  46       9.353 120.553  21.205  1.00 50.00           C  
+ATOM     43  CA  VAL A  47       5.672 120.363  22.137  1.00 50.00           C  
+ATOM     44  CA  CYS A  48       3.762 117.072  22.098  1.00 50.00           C  
+ATOM     45  CA  LEU A  49       0.051 117.885  22.006  1.00 50.00           C  
+ATOM     46  CA  VAL A  50      -1.977 114.698  21.533  1.00 50.00           C  
+ATOM     47  CA  TYR A  51      -5.672 113.751  21.677  1.00 50.00           C  
+ATOM     48  CA  LYS A  52      -7.101 110.219  21.881  1.00 50.00           C  
+ATOM     49  CA  THR A  53     -10.671 108.984  21.435  1.00 50.00           C  
+ATOM     50  CA  ASP A  54     -12.636 105.736  21.244  1.00 50.00           C  
+ATOM     51  CA  GLN A  55     -16.209 107.050  21.053  1.00 50.00           C  
+ATOM     52  CA  ALA A  56     -17.805 107.199  17.588  1.00 50.00           C  
+ATOM     53  CA  GLN A  57     -19.227 110.737  17.664  1.00 50.00           C  
+ATOM     54  CA  ASP A  58     -15.670 112.113  17.700  1.00 50.00           C  
+ATOM     55  CA  VAL A  59     -14.525 111.059  14.216  1.00 50.00           C  
+ATOM     56  CA  LYS A  60     -16.279 113.854  12.314  1.00 50.00           C  
+ATOM     57  CA  LYS A  61     -14.648 116.776  14.132  1.00 50.00           C  
+ATOM     58  CA  ILE A  62     -11.253 115.067  14.114  1.00 50.00           C  
+ATOM     59  CA  GLU A  63     -11.453 114.647  10.345  1.00 50.00           C  
+ATOM     60  CA  LYS A  64     -12.522 118.269   9.864  1.00 50.00           C  
+ATOM     61  CA  PHE A  65      -9.654 119.519  12.024  1.00 50.00           C  
+ATOM     62  CA  HIS A  66      -7.498 117.495   9.631  1.00 50.00           C  
+ATOM     63  CA  SER A  67      -9.060 118.748   6.403  1.00 50.00           C  
+ATOM     64  CA  GLN A  68      -8.771 122.322   7.653  1.00 50.00           C  
+ATOM     65  CA  LEU A  69      -5.139 122.266   8.778  1.00 50.00           C  
+ATOM     66  CA  MET A  70      -4.452 121.038   5.251  1.00 50.00           C  
+ATOM     67  CA  ARG A  71      -6.193 124.045   3.717  1.00 50.00           C  
+ATOM     68  CA  LEU A  72      -4.025 126.442   5.719  1.00 50.00           C  
+ATOM     69  CA  MET A  73      -0.991 124.585   4.375  1.00 50.00           C  
+ATOM     70  CA  VAL A  74      -2.192 124.962   0.791  1.00 50.00           C  
+ATOM     71  CA  ALA A  75      -3.651 128.462   1.122  1.00 50.00           C  
+TER      72      ALA A  75
+END
+
