@@ -2,13 +2,14 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.contrib.layers import fully_connected
 from functools import partial
+import sys
 
-def LinearAutoencoder(X_train, n_input, n_hidden, n_iteration):
+def LinearAutoencoder(X_train, n_input, n_hidden, n_iteration, learning_rate = 0.001):
     n_inputs = n_input # input is flatten version of input matrix
     n_hidden = n_hidden
     n_outputs = n_inputs
 
-    learning_rate = 0.01
+    learning_rate = learning_rate
 
     X = tf.placeholder(tf.float32, shape=[None, n_inputs])
     hidden = fully_connected(X, n_hidden, activation_fn=None)
@@ -40,14 +41,14 @@ def LinearAutoencoder(X_train, n_input, n_hidden, n_iteration):
     return codings_val, loss
 
 
-def StackedAutoencoderWithTiedWeights(X_train, n_input, n_hidden1, n_hidden2, n_epochs):
+def StackedAutoencoderWithTiedWeights(X_train, n_input, n_hidden1, n_hidden2, n_epochs, learning_rate = 0.001):
     n_inputs = n_input # for pair distance matrix
     n_hidden1 = n_hidden1
     n_hidden2 = n_hidden2 # codings
     n_hidden3 = n_hidden1
     n_outputs = n_inputs
 
-    learning_rate = 0.01
+    learning_rate = learning_rate
     l2_reg = 0.001
 
     activation = tf.nn.elu
