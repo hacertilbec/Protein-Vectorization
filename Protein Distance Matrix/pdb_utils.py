@@ -17,12 +17,14 @@ def parsePdbFiles(dir_path):
 
 def CreateContactMap(structure,resize_to):
     coords_list = []
-    for residue in structure.get_residues():
-        try:
-            coords = residue['CA'].coord
-            coords_list.append(coords)
-        except:
-            continue
+    model=structure[0]
+    for chain in model.get_list():
+        for residue in chain.get_list():
+            try:
+                coords = residue['CA'].coord
+                coords_list.append(coords)
+            except:
+                continue
     contact_map = []
     for c in coords_list:
         coord_dist = []
@@ -31,10 +33,13 @@ def CreateContactMap(structure,resize_to):
             coord_dist.append(dist)
         contact_map.append(coord_dist)
     # Resize protein_matrix
-    try:
-        resized = cv2.resize(np.array(contact_map), (resize_to[0], resize_to[1]), interpolation=cv2.INTER_AREA)
-    except:
-        resized = None
+    if resize_to == False:
+        return np.array(contact_map)
+    else:
+        try:
+            resized = cv2.resize(np.array(contact_map), (resize_to[0], resize_to[1]), interpolation=cv2.INTER_AREA)
+        except:
+            resized = None
     return resized
 
 # Removes symmetry from the contact map
@@ -57,5 +62,4 @@ def ProteinContactMapDict(structures, resize_to=(32,32), removeSymmetry=True):
             else:
                 protein_matrix = protein_matrix.flatten()
             protein_matrix_dict[protein.id] = protein_matrix
-            print protein.id
     return protein_matrix_dict
