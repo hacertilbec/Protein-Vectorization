@@ -4,3 +4,5 @@ Protein Distance Matrix/.DS_Store
 .DS_Store
 *.pyc
 *.pkl
+Protein Distance Matrix/.ipynb_checkpoints/
+*.fasta
