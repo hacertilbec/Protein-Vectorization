@@ -3,6 +3,7 @@ import numpy as np
 import os
 import cv2
 from math import ceil
+import random
 
 # Get and parse all pdb files in a folder
 def parsePdbFiles(dir_path):
@@ -16,7 +17,7 @@ def parsePdbFiles(dir_path):
         structures.append(structure)
     return structures
 
-# Sampling: For a protein with length over 256, they randomly sampled a 256×256
+# Sampling: For a protein with length over 256, they randomly sampled a 256x256
 # sub-matrix from its distance matrix. They repeated this procedure
 # multiple times and obtained an ensemble
 
@@ -33,8 +34,8 @@ def sampling(distance_matrix, new_shape=(64,64), sample_size=None):
     return(np.array(ensemble))
 
 # Padding: For a protein with length smaller than 256, we embedded its distance
-# matrix into a 256 × 256 matrix with all elements being 0. The embedding
-# positions are random; thus, we obtained an ensemble of 256 × 256 matrices
+# matrix into a 256x256 matrix with all elements being 0. The embedding
+# positions are random; thus, we obtained an ensemble of 256x256 matrices
 # after repeating this operation multiple times.
 
 def padding(distance_matrix, new_shape=(64,64), sample_size=None):
@@ -68,19 +69,20 @@ def createDistanceMatrix(structure,resize_strategy,resize_to,sample_size):
             dist = np.linalg.norm(c-c_) # calculate distance between coordinates of CAs of residues
             coord_dist.append(dist)
         distance_matrix.append(coord_dist)
+    distance_matrix = np.array(distance_matrix)
     # Resize protein_matrix
     if resize_strategy == False or len(distance_matrix) == resize_to[0]:
         return np.array(distance_matrix)
     else:
         if resize_strategy == "strategy1":
-            resized = cv2.resize(np.array(distance_matrix), (resize_to[0], resize_to[1]), interpolation=cv2.INTER_AREA)
+            resized = cv2.resize(distance_matrix, (resize_to[0], resize_to[1]), interpolation=cv2.INTER_AREA)
         elif resize_strategy == "strategy2":
             if len(distance_matrix) > resize_to[0]:
-                resized = sampling(distance_matrix, new_shape=resize_to,sample_size)
+                resized = sampling(distance_matrix, new_shape=resize_to,sample_size=sample_size)
             else:
-                resized = padding(distance_matrix, new_shape=resize_to,sample_size)
+                resized = padding(distance_matrix, new_shape=resize_to,sample_size=sample_size)
         else:
-            raise("Not a valid strategy method. Use False, strategy1, or strategy2.)
+            raise("Not a valid strategy method. Use False, strategy1, or strategy2.")
             return
     return resized
 
@@ -94,14 +96,22 @@ def RemoveSymmetry(matrix):
     return np.array(flatten)
 
 # get structure list and returns protein, distance matrix dictionary
-def DistanceMatrixDict(structures,resize_strategy="strategy1", resize_to=(32,32), removeSymmetry=True,sample_size=None):
+def DistanceMatrixDict(structures,resize_strategy="strategy1", resize_to=(32,32), removeSymmetry=False,sample_size=None):
+    if resize_strategy == "strategy2" and removeSymmetry == True:
+        raise("RemoveSymmetry parameter can not be used with strategy2")
+        return
     protein_matrix_dict = {}
     for protein in structures:
-        protein_matrix = createDistanceMatrix(protein,resize_strategy, resize_to,sample_size=None)
-        if type(protein_matrix) == np.ndarray:
-            if removeSymmetry == True:
-                protein_matrix = RemoveSymmetry(protein_matrix)
-            else:
-                protein_matrix = protein_matrix.flatten()
-            protein_matrix_dict[protein.id] = protein_matrix
+        protein_matrix = createDistanceMatrix(protein,resize_strategy, resize_to,sample_size)
+        if resize_strategy == "strategy2":
+            for sample in enumerate(protein_matrix):
+                key = protein.id + "sample" + str(sample[0])
+                protein_matrix_dict[key] = sample[1].flatten()
+        else:
+            if type(protein_matrix) == np.ndarray:
+                if removeSymmetry == True:
+                    protein_matrix = RemoveSymmetry(protein_matrix)
+                else:
+                    protein_matrix = protein_matrix.flatten()
+                protein_matrix_dict[protein.id] = protein_matrix
     return protein_matrix_dict
