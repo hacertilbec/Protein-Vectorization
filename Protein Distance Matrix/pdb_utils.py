@@ -2,6 +2,7 @@ from Bio import PDB
 import numpy as np
 import os
 import cv2
+from math import ceil
 
 # Get and parse all pdb files in a folder
 def parsePdbFiles(dir_path):
@@ -15,7 +16,42 @@ def parsePdbFiles(dir_path):
         structures.append(structure)
     return structures
 
-def CreateContactMap(structure,resize_to):
+# Sampling: For a protein with length over 256, they randomly sampled a 256×256
+# sub-matrix from its distance matrix. They repeated this procedure
+# multiple times and obtained an ensemble
+
+def sampling(distance_matrix, new_shape=(64,64), sample_size=None):
+    if not sample_size:
+        sample_size = int(ceil((distance_matrix.shape[0]-new_shape[0])**2/10.)) # Here, the number of ensemble matrices 
+    ensemble = []                                              # was set to be proportional to the length of query protein
+    for sample in range(sample_size):
+        sampled_matrix = []
+        x,y = random.randint(0,len(distance_matrix)-new_shape[0]), random.randint(0,len(distance_matrix)-new_shape[0])
+        for i in range(x,x+new_shape[0]):
+            sampled_matrix.append(distance_matrix[i][y:y+new_shape[0]])
+        ensemble.append(sampled_matrix)
+    return(np.array(ensemble))
+
+# Padding: For a protein with length smaller than 256, we embedded its distance
+# matrix into a 256 × 256 matrix with all elements being 0. The embedding
+# positions are random; thus, we obtained an ensemble of 256 × 256 matrices
+# after repeating this operation multiple times.
+
+def padding(distance_matrix, new_shape=(64,64), sample_size=None):
+    if not sample_size:
+        sample_size = int(ceil((distance_matrix.shape[0]-new_shape[0])**2/10.)) # Here, the number of ensemble matrices 
+    ensemble = []                                                       # was set to be proportional to the
+    for sample in range(sample_size):                                   # length of query protein
+        sampled_matrix = [[0 for i in range(new_shape[0])] for i in range(new_shape[0])]
+        x,y = random.randint(0,len(sampled_matrix)-len(distance_matrix)), random.randint(0,len(sampled_matrix)-len(distance_matrix))
+        s = 0
+        for i in range(x,x+len(distance_matrix)):
+            sampled_matrix[i][y:y+len(distance_matrix)] = distance_matrix[s][:]
+            s+=1
+        ensemble.append(sampled_matrix)
+    return(np.array(ensemble))
+
+def createDistanceMatrix(structure,resize_strategy,resize_to,sample_size):
     coords_list = []
     model=structure[0]
     for chain in model.get_list():
@@ -25,24 +61,30 @@ def CreateContactMap(structure,resize_to):
                 coords_list.append(coords)
             except:
                 continue
-    contact_map = []
+    distance_matrix = []
     for c in coords_list:
         coord_dist = []
         for c_ in coords_list:
             dist = np.linalg.norm(c-c_) # calculate distance between coordinates of CAs of residues
             coord_dist.append(dist)
-        contact_map.append(coord_dist)
+        distance_matrix.append(coord_dist)
     # Resize protein_matrix
-    if resize_to == False:
-        return np.array(contact_map)
+    if resize_strategy == False or len(distance_matrix) == resize_to[0]:
+        return np.array(distance_matrix)
     else:
-        try:
-            resized = cv2.resize(np.array(contact_map), (resize_to[0], resize_to[1]), interpolation=cv2.INTER_AREA)
-        except:
-            resized = None
+        if resize_strategy == "strategy1":
+            resized = cv2.resize(np.array(distance_matrix), (resize_to[0], resize_to[1]), interpolation=cv2.INTER_AREA)
+        elif resize_strategy == "strategy2":
+            if len(distance_matrix) > resize_to[0]:
+                resized = sampling(distance_matrix, new_shape=resize_to,sample_size)
+            else:
+                resized = padding(distance_matrix, new_shape=resize_to,sample_size)
+        else:
+            raise("Not a valid strategy method. Use False, strategy1, or strategy2.)
+            return
     return resized
 
-# Removes symmetry from the contact map
+# Removes symmetry from the distance matrix
 def RemoveSymmetry(matrix):
     flatten = []
     row = 0
@@ -51,11 +93,11 @@ def RemoveSymmetry(matrix):
         row+=1
     return np.array(flatten)
 
-# get structure list and returns protein, contact map dictionary
-def ProteinContactMapDict(structures, resize_to=(32,32), removeSymmetry=True):
+# get structure list and returns protein, distance matrix dictionary
+def DistanceMatrixDict(structures,resize_strategy="strategy1", resize_to=(32,32), removeSymmetry=True,sample_size=None):
     protein_matrix_dict = {}
     for protein in structures:
-        protein_matrix = CreateContactMap(protein, resize_to)
+        protein_matrix = createDistanceMatrix(protein,resize_strategy, resize_to,sample_size=None)
         if type(protein_matrix) == np.ndarray:
             if removeSymmetry == True:
                 protein_matrix = RemoveSymmetry(protein_matrix)
