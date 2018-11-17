@@ -1,0 +1,6 @@
+
+*.pdb
+Protein Distance Matrix/.DS_Store
+.DS_Store
+*.pyc
+*.pkl
