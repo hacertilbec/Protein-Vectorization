@@ -82,7 +82,7 @@ def createDistanceMatrix(structure,resize_strategy,resize_to,sample_size):
             else:
                 resized = padding(distance_matrix, new_shape=resize_to,sample_size=sample_size)
         else:
-            raise("Not a valid strategy method. Use False, strategy1, or strategy2.")
+            print("Not a valid strategy method. Use False, strategy1, or strategy2.")
             return
     return resized
 
@@ -98,15 +98,19 @@ def RemoveSymmetry(matrix):
 # get structure list and returns protein, distance matrix dictionary
 def DistanceMatrixDict(structures,resize_strategy="strategy1", resize_to=(32,32), removeSymmetry=False,sample_size=None):
     if resize_strategy == "strategy2" and removeSymmetry == True:
-        raise("RemoveSymmetry parameter can not be used with strategy2")
+        print("RemoveSymmetry parameter can not be used with strategy2")
         return
     protein_matrix_dict = {}
     for protein in structures:
         protein_matrix = createDistanceMatrix(protein,resize_strategy, resize_to,sample_size)
         if resize_strategy == "strategy2":
-            for sample in enumerate(protein_matrix):
-                key = protein.id + "sample" + str(sample[0])
-                protein_matrix_dict[key] = sample[1].flatten()
+            try:
+                protein_matrix[0].shape[1]
+                for sample in enumerate(protein_matrix):
+                    key = protein.id + "sample" + str(sample[0])
+                    protein_matrix_dict[key] = sample[1].flatten()
+            except:
+                protein_matrix_dict[protein.id] = protein_matrix.flatten()
         else:
             if type(protein_matrix) == np.ndarray:
                 if removeSymmetry == True:
