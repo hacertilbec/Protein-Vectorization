@@ -78,9 +78,9 @@ def createDistanceMatrix(structure,resize_strategy,resize_to,sample_size):
             resized = cv2.resize(distance_matrix, (resize_to[0], resize_to[1]), interpolation=cv2.INTER_AREA)
         elif resize_strategy == "strategy2":
             if len(distance_matrix) > resize_to[0]:
-                resized = sampling(distance_matrix, new_shape=resize_to,sample_size=sample_size)
+                resized = np.average(sampling(distance_matrix, new_shape=resize_to,sample_size=sample_size),axis=0)
             else:
-                resized = padding(distance_matrix, new_shape=resize_to,sample_size=sample_size)
+                resized = np.average(padding(distance_matrix, new_shape=resize_to,sample_size=sample_size),axis=0)
         else:
             print("Not a valid strategy method. Use False, strategy1, or strategy2.")
             return
