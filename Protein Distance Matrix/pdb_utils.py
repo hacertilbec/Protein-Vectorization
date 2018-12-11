@@ -2,7 +2,7 @@ from Bio import PDB
 import numpy as np
 import os
 import cv2
-from math import ceil
+from math import ceil, floor
 import random
 
 # Get and parse all pdb files in a folder
@@ -23,7 +23,7 @@ def parsePdbFiles(dir_path):
 
 def sampling(distance_matrix, new_shape=(64,64), sample_size=None):
     if not sample_size:
-        sample_size = int(ceil((distance_matrix.shape[0]-new_shape[0])**2/10.)) # Here, the number of ensemble matrices 
+        sample_size = int(floor((distance_matrix.shape[0]/float(new_shape[0]))))*2 # Here, the number of ensemble matrices 
     ensemble = []                                              # was set to be proportional to the length of query protein
     for sample in range(sample_size):
         sampled_matrix = []
@@ -40,7 +40,7 @@ def sampling(distance_matrix, new_shape=(64,64), sample_size=None):
 
 def padding(distance_matrix, new_shape=(64,64), sample_size=None):
     if not sample_size:
-        sample_size = int(ceil((distance_matrix.shape[0]-new_shape[0])**2/10.)) # Here, the number of ensemble matrices 
+        sample_size = int(ceil((distance_matrix.shape[0]/float(new_shape[0]))))*2 # Here, the number of ensemble matrices 
     ensemble = []                                                       # was set to be proportional to the
     for sample in range(sample_size):                                   # length of query protein
         sampled_matrix = [[0 for i in range(new_shape[0])] for i in range(new_shape[0])]
@@ -72,17 +72,19 @@ def createDistanceMatrix(structure,resize_strategy,resize_to,sample_size):
     distance_matrix = np.array(distance_matrix)
     # Resize protein_matrix
     if resize_strategy == False or len(distance_matrix) == resize_to[0]:
-        return np.array(distance_matrix)
+        return distance_matrix
     else:
         if resize_strategy == "strategy1":
             resized = cv2.resize(distance_matrix, (resize_to[0], resize_to[1]), interpolation=cv2.INTER_AREA)
         elif resize_strategy == "strategy2":
             if len(distance_matrix) > resize_to[0]:
-                resized = np.average(sampling(distance_matrix, new_shape=resize_to,sample_size=sample_size),axis=0)
+                resized = sampling(distance_matrix, new_shape=resize_to,sample_size=sample_size)
             else:
-                resized = np.average(padding(distance_matrix, new_shape=resize_to,sample_size=sample_size),axis=0)
+                resized = padding(distance_matrix, new_shape=resize_to,sample_size=sample_size)
+        elif resize_strategy == "strategy3":
+            pass
         else:
-            print("Not a valid strategy method. Use False, strategy1, or strategy2.")
+            print("Not a valid strategy method. Use False, strategy1, strategy2 or strategy3.")
             return
     return resized
 

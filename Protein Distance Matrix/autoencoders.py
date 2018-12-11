@@ -150,3 +150,5 @@ def train_autoencoder(X_train, n_neurons, n_epochs,
         params = dict([(var.name, var.eval()) for var in tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES)])
         hidden_val = hidden.eval(feed_dict={X: X_train})
         return hidden_val, params["hidden/kernel:0"], params["hidden/bias:0"], params["outputs/kernel:0"], params["outputs/bias:0"], losses
+    
+   
