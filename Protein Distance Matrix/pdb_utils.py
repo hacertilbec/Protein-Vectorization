@@ -52,6 +52,39 @@ def padding(distance_matrix, new_shape=(64,64), sample_size=None):
         ensemble.append(sampled_matrix)
     return(np.array(ensemble))
 
+# Strategy 3, Sampling
+def sampling_s3(distance_matrix, new_shape=(64,64)):
+    ensemble = []  
+    filter_s=new_shape[0]
+    step = ceil(distance_matrix.shape[0]/filter_s)
+    for i in range(step):
+        for j in range(step):
+            part = np.array(distance_matrix[i*filter_s:(i+1)*filter_s,j*filter_s:(j+1)*filter_s])
+            sample = np.zeros((filter_s,filter_s))
+            sample[0:part.shape[0], 0:part.shape[1]] = part
+            ensemble.append(sample)
+    return(np.array(ensemble))
+
+# Strategy 3, Padding
+def padding_s3(distance_matrix, new_shape=(64,64)):
+    ensemble = []  
+    filter_s=distance_matrix.shape[0]
+    step = ceil(new_shape[0]/distance_matrix.shape[0])
+    for i in range(step):
+        for j in range(step):
+            sample = np.zeros((new_shape[0],new_shape[0]))
+            if ((i+1)*filter_s)>new_shape[0] and ((j+1)*filter_s) >new_shape[0]:
+                d = distance_matrix[0:filter_s-(new_shape[0]-filter_s),0:filter_s-(new_shape[0]-filter_s)]
+            elif ((i+1)*filter_s)>new_shape[0]:            
+                d = distance_matrix[0:filter_s-(new_shape[0]-filter_s),:]
+            elif ((j+1)*filter_s)>new_shape[0]:
+                d = distance_matrix[:,0:filter_s-(new_shape[0]-filter_s)]
+            else:
+                d = distance_matrix
+            sample[i*filter_s:(i+1)*filter_s,j*filter_s:(j+1)*filter_s] = d
+            ensemble.append(sample)
+    return(np.array(ensemble))
+
 def createDistanceMatrix(structure,resize_strategy,resize_to,sample_size):
     coords_list = []
     model=structure[0]
