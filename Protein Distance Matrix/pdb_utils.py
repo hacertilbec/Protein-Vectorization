@@ -115,7 +115,10 @@ def createDistanceMatrix(structure,resize_strategy,resize_to,sample_size):
             else:
                 resized = padding(distance_matrix, new_shape=resize_to,sample_size=sample_size)
         elif resize_strategy == "strategy3":
-            pass
+            if len(distance_matrix) > resize_to[0]:
+                resized = sampling_s3(distance_matrix, new_shape=resize_to)
+            else:
+                resized = padding_s3(distance_matrix, new_shape=resize_to)
         else:
             print("Not a valid strategy method. Use False, strategy1, strategy2 or strategy3.")
             return
@@ -138,7 +141,7 @@ def DistanceMatrixDict(structures,resize_strategy="strategy1", resize_to=(32,32)
     protein_matrix_dict = {}
     for protein in structures:
         protein_matrix = createDistanceMatrix(protein,resize_strategy, resize_to,sample_size)
-        if resize_strategy == "strategy2":
+        if resize_strategy == "strategy2" or resize_strategy == "strategy3":
             try:
                 protein_matrix[0].shape[1]
                 for sample in enumerate(protein_matrix):
