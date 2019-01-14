@@ -13,7 +13,7 @@ def parsePdbFiles(dir_path):
 
     for pdb, pdb_path in pdb_files:
         parser = PDB.PDBParser()
-        structure = parser.get_structure(pdb, pdb_path)
+        structure = parser.get_structure(pdb, pdb_path)[0]
         structures.append(structure)
     return structures
 
@@ -23,7 +23,7 @@ def parsePdbFiles(dir_path):
 
 def sampling(distance_matrix, new_shape=(64,64), sample_size=None):
     if not sample_size:
-        sample_size = int(floor((distance_matrix.shape[0]/float(new_shape[0]))))*2 # Here, the number of ensemble matrices 
+        sample_size = int(floor((distance_matrix.shape[0]/float(new_shape[0]))))*2 # Here, the number of ensemble matrices
     ensemble = []                                              # was set to be proportional to the length of query protein
     for sample in range(sample_size):
         sampled_matrix = []
@@ -40,7 +40,7 @@ def sampling(distance_matrix, new_shape=(64,64), sample_size=None):
 
 def padding(distance_matrix, new_shape=(64,64), sample_size=None):
     if not sample_size:
-        sample_size = int(ceil((distance_matrix.shape[0]/float(new_shape[0]))))*2 # Here, the number of ensemble matrices 
+        sample_size = int(ceil((distance_matrix.shape[0]/float(new_shape[0]))))*2 # Here, the number of ensemble matrices
     ensemble = []                                                       # was set to be proportional to the
     for sample in range(sample_size):                                   # length of query protein
         sampled_matrix = [[0 for i in range(new_shape[0])] for i in range(new_shape[0])]
@@ -54,7 +54,7 @@ def padding(distance_matrix, new_shape=(64,64), sample_size=None):
 
 # Strategy 3, Sampling
 def sampling_s3(distance_matrix, new_shape=(64,64)):
-    ensemble = []  
+    ensemble = []
     filter_s=new_shape[0]
     step = ceil(distance_matrix.shape[0]/filter_s)
     for i in range(step):
@@ -67,7 +67,7 @@ def sampling_s3(distance_matrix, new_shape=(64,64)):
 
 # Strategy 3, Padding
 def padding_s3(distance_matrix, new_shape=(64,64)):
-    ensemble = []  
+    ensemble = []
     filter_s=distance_matrix.shape[0]
     step = ceil(new_shape[0]/distance_matrix.shape[0])
     for i in range(step):
@@ -75,7 +75,7 @@ def padding_s3(distance_matrix, new_shape=(64,64)):
             sample = np.zeros((new_shape[0],new_shape[0]))
             if ((i+1)*filter_s)>new_shape[0] and ((j+1)*filter_s) >new_shape[0]:
                 d = distance_matrix[0:(new_shape[0]%filter_s),0:(new_shape[0]%filter_s)]
-            elif ((i+1)*filter_s)>new_shape[0]:            
+            elif ((i+1)*filter_s)>new_shape[0]:
                 d = distance_matrix[0:(new_shape[0]%filter_s),:]
             elif ((j+1)*filter_s)>new_shape[0]:
                 d = distance_matrix[:,0:(new_shape[0]%filter_s)]
@@ -87,7 +87,10 @@ def padding_s3(distance_matrix, new_shape=(64,64)):
 
 def createDistanceMatrix(structure,resize_strategy,resize_to,sample_size):
     coords_list = []
-    model=structure[0]
+    try:
+        model=structure[0]
+    except:
+        model=structure
     for chain in model.get_list():
         for residue in chain.get_list():
             try:
@@ -108,7 +111,10 @@ def createDistanceMatrix(structure,resize_strategy,resize_to,sample_size):
         return distance_matrix
     else:
         if resize_strategy == "strategy1":
-            resized = cv2.resize(distance_matrix, (resize_to[0], resize_to[1]), interpolation=cv2.INTER_AREA)
+            try:
+                resized = cv2.resize(distance_matrix, (resize_to[0], resize_to[1]), interpolation=cv2.INTER_AREA)
+            except:
+                return []
         elif resize_strategy == "strategy2":
             if len(distance_matrix) > resize_to[0]:
                 resized = sampling(distance_matrix, new_shape=resize_to,sample_size=sample_size)
@@ -141,6 +147,8 @@ def DistanceMatrixDict(structures,resize_strategy="strategy1", resize_to=(32,32)
     protein_matrix_dict = {}
     for protein in structures:
         protein_matrix = createDistanceMatrix(protein,resize_strategy, resize_to,sample_size)
+        if len(protein_matrix) == 0:
+            continue
         if resize_strategy == "strategy2" or resize_strategy == "strategy3":
             try:
                 protein_matrix[0].shape[1]

@@ -4,6 +4,81 @@ from tensorflow.contrib.layers import fully_connected
 from functools import partial
 import sys
 
+import numpy as np
+import tensorflow as tf
+from tensorflow.contrib.layers import fully_connected
+from functools import partial
+import sys
+import os
+
+
+class LinearAutoEncoder:
+    def __init__(self,n_input, n_hidden, n_iteration=100, learning_rate = 0.001,model_path = "models/autoencoder.ckpt"):
+        tf.reset_default_graph()
+        tf.set_random_seed(42)
+        self.n_inputs = n_input
+        self.n_hidden = n_hidden
+        self.n_outputs = n_input
+        self.n_iteration = n_iteration
+        self.learning_rate = learning_rate
+        self.n_iterations = n_iteration
+        
+        self.model_path = model_path
+        
+    def train(self,X_train):
+        X = tf.placeholder(tf.float32, shape=[None, self.n_inputs])
+        hidden = fully_connected(X, self.n_hidden, activation_fn=tf.nn.relu)
+        outputs = fully_connected(hidden, self.n_outputs, activation_fn=tf.nn.relu)
+
+        reconstruction_loss = tf.reduce_sum(tf.square(outputs - X)) # MSE
+
+        optimizer = tf.train.AdamOptimizer(self.learning_rate)
+        training_op = optimizer.minimize(reconstruction_loss)
+
+        codings = hidden # the output of the hidden layer provides the codings
+    
+        init = tf.global_variables_initializer()
+        
+        # Add ops to save and restore all the variables.
+        saver = tf.train.Saver()
+        
+        with tf.Session() as sess:
+            init.run()
+            if os.path.isfile(self.model_path+".index"):
+                saver.restore(sess, self.model_path)
+            loss = []
+            for iteration in range(self.n_iterations):
+                iteration_loss = []
+                for protein in X_train:
+                    _, loss_val = sess.run([training_op, reconstruction_loss], feed_dict={X: [protein]})
+                    iteration_loss.append(loss_val)
+                loss.append(sum(iteration_loss)/float(len(X_train)))
+
+            # Save model parameters
+            save_path = saver.save(sess, self.model_path)
+            print("Model saved in path: %s" % save_path)
+        return loss
+    
+    def encode(self,samples):
+        tf.reset_default_graph()
+        X = tf.placeholder(tf.float32, shape=[None, self.n_inputs])
+        hidden = fully_connected(X, self.n_hidden, activation_fn=None)
+        codings = hidden # the output of the hidden layer provides the codings
+
+        # Add ops to save and restore all the variables.
+        saver = tf.train.Saver()
+        
+        # Later, launch the model, use the saver to restore variables from disk, and
+        # do some work with the model.
+        with tf.Session() as sess:
+            # Restore variables from disk.
+            saver.restore(sess, self.model_path)
+            print("Model restored.")
+            # Check the values of the variables
+            encoding = codings.eval(feed_dict={X: samples},session=sess)
+        return encoding
+    
+    
 def LinearAutoencoder(X_train, n_input, n_hidden, n_iteration, learning_rate = 0.001):
     n_inputs = n_input # input is flatten version of input matrix
     n_hidden = n_hidden
@@ -12,8 +87,8 @@ def LinearAutoencoder(X_train, n_input, n_hidden, n_iteration, learning_rate = 0
     learning_rate = learning_rate
 
     X = tf.placeholder(tf.float32, shape=[None, n_inputs])
-    hidden = fully_connected(X, n_hidden, activation_fn=None)
-    outputs = fully_connected(hidden, n_outputs, activation_fn=None)
+    hidden = fully_connected(X, n_hidden, activation_fn=tf.nn.relu)
+    outputs = fully_connected(hidden, n_outputs, activation_fn=tf.nn.relu)
 
     reconstruction_loss = tf.reduce_sum(tf.square(outputs - X)) # MSE
 
@@ -25,19 +100,22 @@ def LinearAutoencoder(X_train, n_input, n_hidden, n_iteration, learning_rate = 0
     n_iterations = n_iteration # Number of iterations
     codings = hidden # the output of the hidden layer provides the codings
 
+    # Add ops to save and restore all the variables.
+    saver = tf.train.Saver()
+
     with tf.Session() as sess:
         init.run()
         loss = []
         for iteration in range(n_iterations):
-            iteration_loss = []
-            for protein in X_train:
-                _, loss_val = sess.run([training_op, reconstruction_loss], feed_dict={X: [protein]}) # no labels (unsupervised)
-                iteration_loss.append(loss_val)
-            loss.append(sum(iteration_loss)/float(len(X_train)))
+            _, loss_val = sess.run([training_op, reconstruction_loss], feed_dict={X: X_train}) # no labels (unsupervised)
+            loss.append(loss_val)
 
-        # Test on the same protein
+        # Save model parameters
+        save_path = saver.save(sess, "models/autoencoder.ckpt")
+        print("Model saved in path: %s" % save_path)
+        
+        # Encode training samples
         codings_val = codings.eval(feed_dict={X: X_train})
-
     return codings_val, loss
 
 
