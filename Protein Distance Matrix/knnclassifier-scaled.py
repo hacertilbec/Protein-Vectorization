@@ -61,8 +61,6 @@ for fold in range(1,11):
     with open("Folds/{n}_test.txt".format(n=fold),"r") as f:
         for i in f.readlines():
             test_pdbs.append(i.strip("\n"))
-    train_pdbs = train_pdbs[:20]
-    test_pdbs = test_pdbs[:20]
 
     print(len(train_pdbs))
     print(len(test_pdbs))
