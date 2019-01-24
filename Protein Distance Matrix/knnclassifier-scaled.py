@@ -97,7 +97,7 @@ class Autoencoder:
 def loadSCOPTest():
     # SCOP TEST PDBs
     structures = []
-    for pdb in os.listdir("SCOP_Test/")[:5]:
+    for pdb in os.listdir("SCOP_Test/"):
         if not pdb.endswith(".pdb"):
             continue
         pdb_path = os.path.join("SCOP_Test", pdb)
@@ -124,8 +124,6 @@ for fold in range(1,11):
         for i in f.readlines():
             test_pdbs.append(i.strip("\n"))
 
-    train_pdbs = train_pdbs[:10]
-    test_pdbs = test_pdbs[:10]
     print(len(train_pdbs))
     print(len(test_pdbs))
 
