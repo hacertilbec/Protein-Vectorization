@@ -140,7 +140,7 @@ def RemoveSymmetry(matrix):
     return np.array(flatten)
 
 # get structure list and returns protein, distance matrix dictionary
-def DistanceMatrixDict(structures,resize_strategy="strategy1", resize_to=(32,32), removeSymmetry=False,sample_size=None):
+def DistanceMatrixDict(structures,resize_strategy="strategy1", resize_to=(64,64), removeSymmetry=False,sample_size=None):
     if resize_strategy == "strategy2" and removeSymmetry == True:
         print("RemoveSymmetry parameter can not be used with strategy2")
         return
