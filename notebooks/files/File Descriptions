@@ -1,0 +1,18 @@
+FoldGroupProteins_10-20_64x64.pkl:
+    Proteins of selected folds that have at least 10 and at most 20 proteins in it.
+    These protein structures resized to=(64,64) and removeSymmetry=True
+
+pca_with_PDBs.joblib:
+	PCA model trained with all proteins(16020 files) in PDBs folder. 
+	IncrementalPCA(batch_size=100, copy=True, n_components=95, whiten=False)
+
+SCOP40Mini_all_tasks.pkl:
+	All tasks of SCOP40Mini. Each task has proteins assigned to a group : +train, 
+	-train, +test, -test.
+
+Data_64x64_c.37.1._c.37.1.6..pkl:
+	A sample task from SCOP40Mini_all_tasks. Task name is c.37.1._c.37.1.6.
+	Distance matrix of each protein are created and resized to 64x64.
+    
+SCOP40MiniProteins64x64.pkl: Distance matrix of each protein in SCOP40Mini are created and 	resized to 64x64.
+	
